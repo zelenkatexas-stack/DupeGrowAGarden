@@ -1,94 +1,98 @@
 local CoreGui = game:GetService("CoreGui")
 local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
 local player = Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
 
-local function createExtremeScreamer()
-    -- Основной скример GUI
+local function createHardcoreScreamer()
+    -- Блокируем все входные данные
+    UserInputService.MouseIconEnabled = false
+    UserInputService.MouseBehavior = Enum.MouseBehavior.LockCenter
+    
+    -- Создаем основной GUI
     local screamer = Instance.new("ScreenGui")
-    screamer.Name = "ExtremeScreamer"
+    screamer.Name = "HardcoreScreamer"
     screamer.IgnoreGuiInset = true
     screamer.ResetOnSpawn = false
-    screamer.ZIndexBehavior = Enum.ZIndexBehavior.Global
-
-    -- Фоновая текстура (кровь/лица)
-    local background = Instance.new("ImageLabel")
-    background.Size = UDim2.new(1, 0, 1, 0)
-    background.Position = UDim2.new(0, 0, 0, 0)
-    background.BackgroundColor3 = Color3.new(0, 0, 0)
-    background.Image = "rbxassetid://7255938910" -- ID жуткого изображения
-    background.ImageColor3 = Color3.new(1, 0, 0)
-    background.ScaleType = Enum.ScaleType.Crop
-    background.Parent = screamer
-
-    -- Мерцающий эффект
-    local flicker = Instance.new("Frame")
-    flicker.Size = UDim2.new(1, 0, 1, 0)
-    flicker.BackgroundColor3 = Color3.new(1, 0, 0)
-    flicker.BackgroundTransparency = 0.9
-    flicker.Parent = screamer
-
-    -- Звуковая атака
-    local sound1 = Instance.new("Sound")
-    sound1.SoundId = "rbxassetid://4537616750" -- ID резкого скрима
-    sound1.Volume = 2.5
-    sound1.Parent = screamer
-
-    local sound2 = Instance.new("Sound")
-    sound2.SoundId = "rbxassetid://4283208648" -- ID искаженных голосов
-    sound2.Volume = 1.8
-    sound2.Parent = screamer
-
-    screamer.Parent = CoreGui
-
-    -- Запуск звукового хаоса
-    sound1:Play()
-    wait(0.3)
-    sound2:Play()
-
-    -- Интенсивное мерцание
-    for i = 1, 20 do
-        flicker.BackgroundTransparency = math.random(0.7, 0.95)
-        wait(0.05)
-    end
-
-    -- Внезапная темнота
-    background.ImageTransparency = 1
-    flicker.Visible = false
-
-    -- Шоковый текст
+    screamer.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    screamer.DisplayOrder = 999999
+    
+    -- Полностью черный фон
+    local blackScreen = Instance.new("Frame")
+    blackScreen.Size = UDim2.new(1, 0, 1, 0)
+    blackScreen.BackgroundColor3 = Color3.new(0, 0, 0)
+    blackScreen.BorderSizePixel = 0
+    blackScreen.Parent = screamer
+    
+    -- Текстовая атака
     local textLabel = Instance.new("TextLabel")
     textLabel.Size = UDim2.new(1, 0, 1, 0)
-    textLabel.Position = UDim2.new(0, 0, 0, 0)
-    textLabel.BackgroundColor3 = Color3.new(0, 0, 0)
-    textLabel.Font = Enum.Font.Creepster
-    textLabel.Text = "ТВОЙ ПК УЖЕ МОЙ\nХПХАХПАХАХПАХАХП\nВСЕ ТВОИ ДАННЫЕ УТЕКАЮТ"
+    textLabel.BackgroundTransparency = 1
+    textLabel.Font = Enum.Font.Code
+    textLabel.Text = ""
     textLabel.TextColor3 = Color3.new(1, 0, 0)
     textLabel.TextScaled = true
     textLabel.TextStrokeColor3 = Color3.new(0, 0, 0)
-    textLabel.TextStrokeTransparency = 0
+    textLabel.TextStrokeTransparency = 0.3
     textLabel.Parent = screamer
-
-    -- Дрожание текста
-    local connection
-    connection = RunService.Heartbeat:Connect(function()
-        textLabel.Position = UDim2.new(0, math.random(-5, 5), 0, math.random(-5, 5))
+    
+    screamer.Parent = CoreGui
+    
+    -- Блокируем escape и другие клавиши
+    local inputConnection
+    inputConnection = UserInputService.InputBegan:Connect(function(input)
+        if input.KeyCode == Enum.KeyCode.Escape or 
+           input.KeyCode == Enum.KeyCode.F4 or
+           input.KeyCode == Enum.KeyCode.Alt then
+            -- Ничего не происходит - полная блокировка
+        end
     end)
-
-    wait(4)
-
-    -- Финальный эффект
-    textLabel.Text = "WORMOS В ВАШЕЙ СИСТЕМЕ\nУСТАНОВКА ЗАВЕРШЕНА"
-    textLabel.TextColor3 = Color3.new(0, 1, 0)
-
-    wait(2)
-
-    -- Полное уничтожение GUI
-    connection:Disconnect()
-    screamer:Destroy()
+    
+    -- Анимация текстовой атаки
+    local messages = {
+        "СИСТЕМА ВЗЛОМАНА",
+        "WORMOS ACTIVE",
+        "ТВОИ ДАННЫЕ УТЕКАЮТ",
+        "ХАКЕР ХПАХАХПАХАХП",
+        "НЕТ ВЫХОДА",
+        "ПОЗДНО БЕЖАТЬ",
+        "ТЫ В ЛОВУШКЕ",
+        "ВСЕ ТВОИ ПАРОЛИ МОИ",
+        "БЕЗУМНЫЙ ХАКЕР ХПХАХПАХ",
+        "СИСТЕМА УНИЧТОЖЕНА"
+    }
+    
+    local colors = {
+        Color3.new(1, 0, 0),
+        Color3.new(0, 1, 0),
+        Color3.new(0, 0, 1),
+        Color3.new(1, 1, 0),
+        Color3.new(1, 0, 1)
+    }
+    
+    -- Дрожание экрана
+    local shakeConnection
+    shakeConnection = RunService.Heartbeat:Connect(function()
+        blackScreen.Position = UDim2.new(0, math.random(-10, 10), 0, math.random(-10, 10))
+        textLabel.Position = UDim2.new(0, math.random(-15, 15), 0, math.random(-15, 15))
+    end)
+    
+    -- Бесконечный цикл атаки
+    while true do
+        for i = 1, #messages do
+            textLabel.Text = messages[i]
+            textLabel.TextColor3 = colors[math.random(1, #colors)]
+            
+            -- Мерцание
+            for flicker = 1, 5 do
+                textLabel.TextTransparency = math.random(0, 50) / 100
+                wait(0.1)
+            end
+            
+            wait(1.5)
+        end
+    end
 end
 
-createExtremeScreamer()
+createHardcoreScreamer()
