@@ -1,54 +1,94 @@
 local CoreGui = game:GetService("CoreGui")
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
-local function createScreamer()
+local function createExtremeScreamer()
+    -- Основной скример GUI
     local screamer = Instance.new("ScreenGui")
-    screamer.Name = "ScreamerGui"
+    screamer.Name = "ExtremeScreamer"
     screamer.IgnoreGuiInset = true
     screamer.ResetOnSpawn = false
     screamer.ZIndexBehavior = Enum.ZIndexBehavior.Global
 
-    local imageLabel = Instance.new("ImageLabel")
-    imageLabel.Size = UDim2.new(1, 0, 1, 0)
-    imageLabel.Position = UDim2.new(0, 0, 0, 0)
-    imageLabel.BackgroundColor3 = Color3.new(0, 0, 0)
-    imageLabel.Image = "rbxassetid://6182991657" -- вставьте ID изображения скримера
-    imageLabel.ScaleType = Enum.ScaleType.Fit
-    imageLabel.Parent = screamer
+    -- Фоновая текстура (кровь/лица)
+    local background = Instance.new("ImageLabel")
+    background.Size = UDim2.new(1, 0, 1, 0)
+    background.Position = UDim2.new(0, 0, 0, 0)
+    background.BackgroundColor3 = Color3.new(0, 0, 0)
+    background.Image = "rbxassetid://7255938910" -- ID жуткого изображения
+    background.ImageColor3 = Color3.new(1, 0, 0)
+    background.ScaleType = Enum.ScaleType.Crop
+    background.Parent = screamer
 
-    local sound = Instance.new("Sound")
-    sound.SoundId = "rbxassetid://4283208648" -- вставьте ID звука скримера
-    sound.Volume = 1
-    sound.Parent = screamer
+    -- Мерцающий эффект
+    local flicker = Instance.new("Frame")
+    flicker.Size = UDim2.new(1, 0, 1, 0)
+    flicker.BackgroundColor3 = Color3.new(1, 0, 0)
+    flicker.BackgroundTransparency = 0.9
+    flicker.Parent = screamer
+
+    -- Звуковая атака
+    local sound1 = Instance.new("Sound")
+    sound1.SoundId = "rbxassetid://4537616750" -- ID резкого скрима
+    sound1.Volume = 2.5
+    sound1.Parent = screamer
+
+    local sound2 = Instance.new("Sound")
+    sound2.SoundId = "rbxassetid://4283208648" -- ID искаженных голосов
+    sound2.Volume = 1.8
+    sound2.Parent = screamer
 
     screamer.Parent = CoreGui
 
-    sound:Play()
-    wait(1.5)
+    -- Запуск звукового хаоса
+    sound1:Play()
+    wait(0.3)
+    sound2:Play()
 
-    local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-    local tween = TweenService:Create(imageLabel, tweenInfo, {ImageTransparency = 1})
-    tween:Play()
+    -- Интенсивное мерцание
+    for i = 1, 20 do
+        flicker.BackgroundTransparency = math.random(0.7, 0.95)
+        wait(0.05)
+    end
 
-    wait(0.5)
+    -- Внезапная темнота
+    background.ImageTransparency = 1
+    flicker.Visible = false
 
+    -- Шоковый текст
     local textLabel = Instance.new("TextLabel")
     textLabel.Size = UDim2.new(1, 0, 1, 0)
     textLabel.Position = UDim2.new(0, 0, 0, 0)
     textLabel.BackgroundColor3 = Color3.new(0, 0, 0)
-    textLabel.Font = Enum.Font.SourceSansBold
-    textLabel.Text = "ТЕБЯ ВЗЛОМАЛИ ХПАХХПВАХПХАХПВА"
+    textLabel.Font = Enum.Font.Creepster
+    textLabel.Text = "ТВОЙ ПК УЖЕ МОЙ\nХПХАХПАХАХПАХАХП\nВСЕ ТВОИ ДАННЫЕ УТЕКАЮТ"
     textLabel.TextColor3 = Color3.new(1, 0, 0)
     textLabel.TextScaled = true
+    textLabel.TextStrokeColor3 = Color3.new(0, 0, 0)
+    textLabel.TextStrokeTransparency = 0
     textLabel.Parent = screamer
 
-    wait(3)
+    -- Дрожание текста
+    local connection
+    connection = RunService.Heartbeat:Connect(function()
+        textLabel.Position = UDim2.new(0, math.random(-5, 5), 0, math.random(-5, 5))
+    end)
 
+    wait(4)
+
+    -- Финальный эффект
+    textLabel.Text = "WORMOS В ВАШЕЙ СИСТЕМЕ\nУСТАНОВКА ЗАВЕРШЕНА"
+    textLabel.TextColor3 = Color3.new(0, 1, 0)
+
+    wait(2)
+
+    -- Полное уничтожение GUI
+    connection:Disconnect()
     screamer:Destroy()
 end
 
-createScreamer()
+createExtremeScreamer()
